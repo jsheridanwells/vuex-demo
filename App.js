@@ -43,8 +43,11 @@ const myStore = new Vuex.Store({
         },
         toggleCompleted: (state, id) => {
             let i = state.todos.findIndex(todo => todo.id === id);
-            console.log(i);
             state.todos[i].completed = !state.todos[i].completed;
+        },
+        deleteTodo: (state, id) => {
+            let i = state.todos.findIndex(todo => todo.id === id);
+            state.todos.splice(i, 1);
         }
     }
 });
@@ -58,6 +61,7 @@ const TodoList = {
                     v-for="(t, i) in todos"
                     :key="i"
                     @click="toggleCompleted(t.id)"
+                    @dblclick="deleteTodo(t.id)"
                     :class="{ completed: t.completed }"
                 >{{ t.task }}</li>
             </ul>
@@ -65,8 +69,10 @@ const TodoList = {
     `,
     methods: {
         toggleCompleted: function(id) {
-            console.log(id);
             this.$store.commit('toggleCompleted', id);
+        },
+        deleteTodo: function(id) {
+            this.$store.commit('deleteTodo', id);
         }
     }
 };
@@ -75,6 +81,7 @@ const App = new Vue({
     components: { 'todo-list': TodoList},
     template: `
         <div>
+            <div><p>these are your todos<br> click to mark completed,<br> double-click to delete</p></div>
             <form @submit.prevent="addTodo">
                 <input type=text v-model="task" />
             </form>
